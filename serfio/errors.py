@@ -1,0 +1,2 @@
+class SerfError(Exception):
+    pass

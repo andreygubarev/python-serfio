@@ -8,7 +8,8 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 image = build(path=PATH, tag='serf:latest')
 server = container(image='{image.id}', ports={'7373/tcp': None})
 
-
 @pytest.fixture
-def port(server):
-    return server.ports['7373/tcp'][0]
+def serf(server):
+    import serfio
+    port = server.ports['7373/tcp'][0]
+    return serfio.Serf(port=port)

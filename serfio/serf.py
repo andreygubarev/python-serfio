@@ -9,7 +9,6 @@ class Serf:
 
     def __init__(self, protocol):
         self.protocol = protocol
-        self.streams = {}
 
     @classmethod
     async def connect(cls, host='localhost', port=7373, auth_key=None):

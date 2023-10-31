@@ -8,6 +8,10 @@ help: ## Show this help
 lint: ## Lint Python Package
 	python -m pycodestyle --max-line-length=120 serfio
 
+.PHONY: test
+test: ## Test Python Package
+	python -m pytest
+
 .PHONY: build
 build: ## Build Python Package
 	python -m build --sdist --wheel

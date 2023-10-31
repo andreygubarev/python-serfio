@@ -7,3 +7,4 @@ async def test_stat(port):
     header, body = await serf.stats()
     assert not header['Error']
     assert 'serf' in body
+    await serf.close()

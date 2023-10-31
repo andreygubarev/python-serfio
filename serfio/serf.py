@@ -16,6 +16,9 @@ class Serf:
         protocol = await cls.PROTOCOL.connect(host, port, auth_key)
         return cls(protocol)
 
+    async def close(self):
+        await self.protocol.close()
+
     async def event(self, name, payload=None, coalesce=False):
         req = await self.protocol.send({
             "command": "event",

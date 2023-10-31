@@ -8,6 +8,7 @@ msgpack = "1.0.3"
 
 [dev-packages]
 build = "*"
+pycodestyle = "*"
 
 [requires]
 python_version = "3.11"

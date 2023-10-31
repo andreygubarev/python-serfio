@@ -1,4 +1,4 @@
-# Serfio: Python asyncio client for Serf
+# Serfio: Python client for Serf
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 

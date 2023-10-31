@@ -1,5 +1,3 @@
-import serfio
-
 async def test_stats(serf):
     async with serf:
         header, body = await serf.stats()

@@ -10,6 +10,5 @@ server = container(image='{image.id}', ports={'7373/tcp': None})
 
 
 @pytest.fixture
-@pytest.mark.asyncio
 def port(server):
     return server.ports['7373/tcp'][0]

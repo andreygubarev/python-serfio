@@ -21,7 +21,7 @@ jobs:
         run: pip install pycodestyle
 
       - name: Lint with pycodestyle
-        run: pycodestyle serfio
+        run: make lint
 
   build:
     runs-on: ubuntu-latest

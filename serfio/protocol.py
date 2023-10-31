@@ -48,6 +48,7 @@ class Channel:
                 await chan.join()
         self._channel.pop(key, None)
 
+
 class Protocol:
     CHANNEL = Channel
     TRANSPORT = Transport
@@ -114,9 +115,9 @@ class Protocol:
     async def send(self, req):
         req["seq"], self._seq_send = self._seq_send, self._seq_send + 1
         data = codec.encode(
-            seq = req["seq"],
-            command = req["command"],
-            body = req.get("body")
+            seq=req["seq"],
+            command=req["command"],
+            body=req.get("body")
         )
         await self.transport.write(data)
         return req

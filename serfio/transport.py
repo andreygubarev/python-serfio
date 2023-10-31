@@ -19,6 +19,10 @@ class Transport:
             reader, writer = await asyncio.open_connection(host, port)
             return cls(reader, writer)
 
+    async def close(self):
+        self.writer.close()
+        await self.writer.wait_closed()
+
     async def read(self):
         if self.reader.at_eof():
             raise ConnectionError("Connection closed")

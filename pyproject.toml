@@ -21,3 +21,6 @@ dependencies = ["msgpack >= 1.0.3"]
 Homepage = "https://github.com/andreygubarev/python-serfio/"
 
 [tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

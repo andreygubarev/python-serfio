@@ -71,6 +71,9 @@ class Protocol:
             await protocol._auth(auth_key)
         return protocol
 
+    async def close(self):
+        await self.transport.close()
+
     async def _recv(self):
         while True:
             try:
@@ -86,10 +89,8 @@ class Protocol:
 
     @contextlib.asynccontextmanager
     async def recv(self, req):
-        async def gen():
+        async def gen(tasks):
             while True:
-                tasks = []
-
                 tasks.append(asyncio.create_task(self._recv()))
                 header, header_chan = await self.channel.recv(req["seq"], "header")
                 header_chan.task_done()
@@ -105,11 +106,14 @@ class Protocol:
                     body_chan.task_done()
                     yield [header, body]
 
-                await asyncio.gather(*tasks)
+                await asyncio.gather(*tasks, return_exceptions=True)
+                tasks.clear()
 
         try:
-            yield gen()
+            tasks = []
+            yield gen(tasks)
         finally:
+            asyncio.gather(*tasks).cancel()
             await self.channel.close(req["seq"])
 
     async def send(self, req):

@@ -9,6 +9,9 @@ msgpack = "1.0.3"
 [dev-packages]
 build = "*"
 pycodestyle = "*"
+pytest = ">=7.4.0,<7.5.0"
+pytest-asyncio = ">=0.21.0,<0.22.0"
+pytest-docker-tools = ">=3.1.0,<3.2.0"
 
 [requires]
 python_version = "3.11"

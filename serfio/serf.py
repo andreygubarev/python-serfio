@@ -7,14 +7,26 @@ class Serf:
     PROTOCOL = Protocol
     TIMEOUT = 10
 
-    def __init__(self, protocol):
-        self.protocol = protocol
-        self.streams = {}
+    def __init__(self, host='localhost', port=7373, auth_key=None):
+        self.host = host
+        self.port = port
+        self.auth_key = auth_key
 
-    @classmethod
-    async def connect(cls, host='localhost', port=7373, auth_key=None):
-        protocol = await cls.PROTOCOL.connect(host, port, auth_key)
-        return cls(protocol)
+        self.protocol = None
+
+    async def connect(self):
+        self.protocol = await self.PROTOCOL.connect(self.host, self.port, self.auth_key)
+        return self
+
+    async def close(self):
+        await self.protocol.close()
+
+    async def __aenter__(self):
+        await self.connect()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
 
     async def event(self, name, payload=None, coalesce=False):
         req = await self.protocol.send({

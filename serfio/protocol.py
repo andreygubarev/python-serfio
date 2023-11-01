@@ -80,9 +80,13 @@ class Protocol:
 
     async def _recv(self):
         while True:
+            err = False
             try:
                 resp, self._buf = codec.decode(self._buf)
             except codec.DecodeError:
+                err = True
+
+            if err:
                 self._buf += await self.transport.read()
                 continue
 

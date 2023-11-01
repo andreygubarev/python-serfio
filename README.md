@@ -53,3 +53,4 @@ Serf:
 
 -  aioserf: https://pypi.org/project/aioserf/
 -  asyncserf: https://pypi.org/project/asyncserf/
+-  serf-python: https://github.com/spikeekips/serf-python

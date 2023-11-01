@@ -37,6 +37,7 @@ async def test_stream(serf):
             assert body['Payload'] == b'test'
             break
 
+
 async def test_monitor(serf):
     async with serf:
         async for event in serf.monitor():
@@ -44,3 +45,18 @@ async def test_monitor(serf):
             assert not header['Error']
             assert "Serf agent starting" in body['Log']
             break
+
+
+async def test_members(serf):
+    async with serf:
+        header, body = await serf.members()
+        assert not header['Error']
+        assert 'Members' in body
+
+
+async def test_members_filtered(serf):
+    async with serf:
+        header, body = await serf.members_filtered(tags={'test': 'test'})
+        assert not header['Error']
+        assert 'Members' in body
+        assert len(body['Members']) == 0

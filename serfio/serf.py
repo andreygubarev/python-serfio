@@ -87,12 +87,18 @@ class Serf:
         }
 
         if name:
+            if not isinstance(name, str):
+                raise TypeError("name must be a str")
             msg["body"]["Name"] = name
 
         if status:
+            if not isinstance(status, str):
+                raise TypeError("status must be a str")
             msg["body"]["Status"] = status
 
         if tags:
+            if not isinstance(tags, dict):
+                raise TypeError("tags must be a dict")
             msg["body"]["Tags"] = tags
 
         req = await self.protocol.send(msg)

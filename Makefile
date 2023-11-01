@@ -22,4 +22,4 @@ install: ## Install Python Package
 
 .PHONY: clean
 clean: ## Clean Python Package
-	rm -rf build dist *.egg-info
+	git clean -fdX

@@ -36,3 +36,11 @@ async def test_stream(serf):
             assert body['Name'] == 'test'
             assert body['Payload'] == b'test'
             break
+
+async def test_monitor(serf):
+    async with serf:
+        async for event in serf.monitor():
+            header, body = event
+            assert not header['Error']
+            assert "Serf agent starting" in body['Log']
+            break

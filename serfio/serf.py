@@ -131,7 +131,7 @@ class Serf:
                 logger.debug("serf.stream: %s", event)
                 yield event
 
-    async def monitor(self, log_level):
+    async def monitor(self, log_level="DEBUG"):
         req = await self.protocol.send({
             "command": "monitor",
             "body": {
@@ -140,7 +140,9 @@ class Serf:
         })
 
         async with self.protocol.recv(req) as stream:
+            await anext(stream)  # skip header
             async for event in stream:
+                logger.debug("serf.monitor: %s", event)
                 yield event
 
     async def stop(self, seq):

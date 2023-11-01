@@ -14,4 +14,4 @@ def serf(server):
     import serfio
 
     port = server.ports["7373/tcp"][0]
-    return serfio.Serf(port=port)
+    return serfio.Serf(port=port, auth_key="secret")

@@ -121,15 +121,19 @@ class Serf:
         }
 
         if tags:
+            if not isinstance(tags, dict):
+                raise TypeError("tags must be a dict")
             msg["body"]["Tags"] = tags
 
         if delete_tags:
+            if not isinstance(delete_tags, list):
+                raise TypeError("delete_tags must be a list")
             msg["body"]["DeleteTags"] = tags
 
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                return (await anext(stream))[0]
 
     async def stream(self, event_type="*"):
         req = await self.protocol.send(

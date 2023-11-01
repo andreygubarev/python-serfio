@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 
 async def test_stats(serf):
     async with serf:
@@ -57,3 +59,23 @@ async def test_monitor(serf):
             assert not header["Error"]
             assert "Serf agent starting" in body["Log"]
             break
+
+
+async def test_tags(serf):
+    async with serf:
+        header = await serf.tags(tags={"test": "test", "test2": "test2"})
+        assert not header["Error"]
+
+        with pytest.raises(TypeError):
+            await serf.tags(tags=["test"])
+
+        header = await serf.tags(delete_tags=["test2"])
+        assert not header["Error"]
+
+        with pytest.raises(TypeError):
+            await serf.tags(delete_tags={"test2": "test2"})
+
+        header, body = await serf.members_filtered(tags={"test": "test"})
+        assert not header["Error"]
+        assert "Members" in body
+        assert len(body["Members"]) == 1

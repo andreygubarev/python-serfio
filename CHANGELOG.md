@@ -7,8 +7,8 @@
 
 # 0.2.2 (2023-11-01)
 
--  Enhanced testing capabilities with the addition of pytest coverage
--  Introduced error handling to the protocol's _recv method
+-  Enhanced testing capabilities with the addition of pytest coverage.
+-  Introduced error handling to the protocol's _recv method.
 -  Introduced debug logging in protocol and serf modules.
 
 # 0.2.1 (2023-11-01)
@@ -22,4 +22,4 @@
 
 # 0.1.0 (2023-10-31)
 
--  Initial release
+-  Initial release.

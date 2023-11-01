@@ -6,7 +6,7 @@ help: ## Show this help
 
 .PHONY: lint
 lint: ## Lint Python Package
-	python -m pycodestyle --max-line-length=120 serfio tests
+	python -m flake8
 
 .PHONY: test
 test: ## Test Python Package

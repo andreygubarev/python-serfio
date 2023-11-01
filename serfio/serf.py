@@ -194,8 +194,8 @@ class Serf:
 
     async def query(
         self,
-        name=None,
-        payload=None,
+        name,
+        payload,
         filter_nodes=None,
         filter_tags=None,
         timeout=0,
@@ -204,16 +204,12 @@ class Serf:
         msg = {
             "command": "query",
             "body": {
+                "Name": name,
+                "Payload": payload,
                 "RequestAck": request_ack,
                 "Timeout": timeout,
             },
         }
-
-        if name:
-            msg["body"]["Name"] = name
-
-        if payload:
-            msg["body"]["Payload"] = payload
 
         if filter_nodes:
             msg["body"]["FilterNodes"] = filter_nodes
@@ -223,9 +219,12 @@ class Serf:
 
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
-            await anext(stream)  # skip header
-            async for event in stream:
-                yield event
+            async with asyncio.timeout(self.TIMEOUT):
+                await anext(stream)  # skip header
+                async for event in stream:
+                    yield event
+                    if event[1]["Type"] == "done":
+                        break
 
     async def respond(self, id_, payload=None):
         msg = {

@@ -89,3 +89,32 @@ async def test_query(serf):
             assert "Type" in body
             assert body["Type"] == "ack"
             break
+
+
+async def test_respond(serf):
+    async with serf:
+
+        async def query():
+            await asyncio.sleep(0.1)
+            async for event in serf.query("test", "test"):
+                header, body = event
+                assert not header["Error"]
+                if body["Type"] == "ack":
+                    continue
+                if body["Type"] == "response":
+                    assert body["Payload"] == b"response:test:test"
+
+        async def respond():
+            async for event in serf.stream("query"):
+                header, body = event
+                assert not header["Error"]
+                query_id = body["ID"]
+                query_name = body["Name"]
+                query_payload = body["Payload"].decode()
+                query_response = f"response:{query_name}:{query_payload}"
+                await serf.respond(query_id, query_response)
+                break
+
+        query = asyncio.create_task(query())
+        respond = asyncio.create_task(respond())
+        await asyncio.gather(query, respond)

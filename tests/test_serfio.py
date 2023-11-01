@@ -15,6 +15,14 @@ async def test_members(serf):
         assert 'Members' in body
 
 
+async def test_members_filtered(serf):
+    async with serf:
+        header, body = await serf.members_filtered(tags={'test': 'test'})
+        assert not header['Error']
+        assert 'Members' in body
+        assert len(body['Members']) == 0
+
+
 async def test_event(serf):
     async with serf:
         header = await serf.event('test', 'test')
@@ -47,18 +55,3 @@ async def test_monitor(serf):
             assert not header['Error']
             assert "Serf agent starting" in body['Log']
             break
-
-
-async def test_members(serf):
-    async with serf:
-        header, body = await serf.members()
-        assert not header['Error']
-        assert 'Members' in body
-
-
-async def test_members_filtered(serf):
-    async with serf:
-        header, body = await serf.members_filtered(tags={'test': 'test'})
-        assert not header['Error']
-        assert 'Members' in body
-        assert len(body['Members']) == 0

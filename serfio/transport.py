@@ -28,10 +28,7 @@ class Transport:
             raise ConnectionError("Connection closed")
 
         async with self._rlock:
-            try:
-                return await self.reader.read(self.BUFFER_SIZE)
-            except asyncio.CancelledError:
-                return b""
+            return await self.reader.read(self.BUFFER_SIZE)
 
     async def write(self, data):
         async with self._wlock:

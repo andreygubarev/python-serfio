@@ -37,6 +37,8 @@ async def test_stream(serf):
             assert body['Payload'] == b'test'
             break
 
+        await asyncio.gather(serf_event)
+
 
 async def test_monitor(serf):
     async with serf:

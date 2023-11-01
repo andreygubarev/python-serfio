@@ -122,7 +122,14 @@ class Protocol:
             tasks = []
             yield gen(tasks)
         finally:
-            asyncio.gather(*tasks).cancel()
+            for task in tasks:
+                task.cancel()
+            finished_tasks, pending_tasks = await asyncio.wait(tasks)
+            for task in finished_tasks:
+                try:
+                    task.result()
+                except asyncio.CancelledError:
+                    pass
             await self.channel.close(req["seq"])
 
     async def send(self, req):

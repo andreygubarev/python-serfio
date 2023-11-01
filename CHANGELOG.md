@@ -1,3 +1,8 @@
+# 0.2.4 (2023-11-01)
+
+-  Added tests for `respond` and `query` methods
+-  Added tests for `auth` method
+
 # 0.2.3 (2023-11-01)
 
 -  Transitioned from `pycodestyle` to `flake8` for linting.

@@ -1,10 +1,14 @@
 import asyncio
 import contextlib
 import collections
+import logging
 
 from . import codec
 from . import errors
 from .transport import Transport
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 BODYLESS_COMMANDS = (
     "handshake",
@@ -85,6 +89,7 @@ class Protocol:
             if "Seq" in resp:
                 self._seq_recv = resp["Seq"]
 
+            logger.debug("protocol._recv: %s %s", self._seq_recv, resp)
             await self.channel.send(self._seq_recv, resp)
 
     @contextlib.asynccontextmanager
@@ -94,20 +99,19 @@ class Protocol:
                 tasks.append(asyncio.create_task(self._recv()))
                 header, header_chan = await self.channel.recv(req["seq"], "header")
                 header_chan.task_done()
+                logger.debug("protocol.recv: %s", header)
 
                 if req["command"] in BODYLESS_COMMANDS:
-                    yield [header]
+                    yield (header,)
                 elif req["command"] in STREAMING_COMMANDS and not req.get("stream"):
                     req["stream"] = True
-                    yield [header]
+                    yield (header,)
                 else:
                     tasks.append(asyncio.create_task(self._recv()))
                     body, body_chan = await self.channel.recv(req["seq"], "body")
                     body_chan.task_done()
-                    yield [header, body]
-
-                await asyncio.gather(*tasks, return_exceptions=True)
-                tasks.clear()
+                    logger.debug("protocol.recv: %s", body)
+                    yield (header, body)
 
         try:
             tasks = []

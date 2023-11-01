@@ -1,6 +1,10 @@
 import asyncio
+import logging
 
 from .protocol import Protocol
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class Serf:
@@ -122,7 +126,9 @@ class Serf:
         })
 
         async with self.protocol.recv(req) as stream:
+            await anext(stream)  # skip header
             async for event in stream:
+                logger.debug("serf.stream: %s", event)
                 yield event
 
     async def monitor(self, log_level):

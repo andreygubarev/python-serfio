@@ -121,15 +121,19 @@ class Serf:
         }
 
         if tags:
+            if not isinstance(tags, dict):
+                raise TypeError("tags must be a dict")
             msg["body"]["Tags"] = tags
 
         if delete_tags:
+            if not isinstance(delete_tags, list):
+                raise TypeError("delete_tags must be a list")
             msg["body"]["DeleteTags"] = tags
 
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                return (await anext(stream))[0]
 
     async def stream(self, event_type="*"):
         req = await self.protocol.send(
@@ -190,16 +194,18 @@ class Serf:
 
     async def query(
         self,
+        name,
+        payload,
         filter_nodes=None,
         filter_tags=None,
-        request_ack=True,
         timeout=0,
-        name=None,
-        payload=None,
+        request_ack=True,
     ):
         msg = {
             "command": "query",
             "body": {
+                "Name": name,
+                "Payload": payload,
                 "RequestAck": request_ack,
                 "Timeout": timeout,
             },
@@ -211,16 +217,14 @@ class Serf:
         if filter_tags:
             msg["body"]["FilterTags"] = filter_tags
 
-        if name:
-            msg["body"]["Name"] = name
-
-        if payload:
-            msg["body"]["Payload"] = payload
-
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
-            async for event in stream:
-                yield event
+            async with asyncio.timeout(self.TIMEOUT):
+                await anext(stream)  # skip header
+                async for event in stream:
+                    yield event
+                    if event[1]["Type"] == "done":
+                        break
 
     async def respond(self, id_, payload=None):
         msg = {

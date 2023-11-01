@@ -79,3 +79,13 @@ async def test_tags(serf):
         assert not header["Error"]
         assert "Members" in body
         assert len(body["Members"]) == 1
+
+
+async def test_query(serf):
+    async with serf:
+        async for event in serf.query("test", "test"):
+            header, body = event
+            assert not header["Error"]
+            assert "Type" in body
+            assert body["Type"] == "ack"
+            break

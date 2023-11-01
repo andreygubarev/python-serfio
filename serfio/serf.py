@@ -194,12 +194,12 @@ class Serf:
 
     async def query(
         self,
-        filter_nodes=None,
-        filter_tags=None,
-        request_ack=True,
-        timeout=0,
         name=None,
         payload=None,
+        filter_nodes=None,
+        filter_tags=None,
+        timeout=0,
+        request_ack=True,
     ):
         msg = {
             "command": "query",
@@ -209,20 +209,21 @@ class Serf:
             },
         }
 
-        if filter_nodes:
-            msg["body"]["FilterNodes"] = filter_nodes
-
-        if filter_tags:
-            msg["body"]["FilterTags"] = filter_tags
-
         if name:
             msg["body"]["Name"] = name
 
         if payload:
             msg["body"]["Payload"] = payload
 
+        if filter_nodes:
+            msg["body"]["FilterNodes"] = filter_nodes
+
+        if filter_tags:
+            msg["body"]["FilterTags"] = filter_tags
+
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
+            await anext(stream)  # skip header
             async for event in stream:
                 yield event
 

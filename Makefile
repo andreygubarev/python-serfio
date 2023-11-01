@@ -10,7 +10,7 @@ lint: ## Lint Python Package
 
 .PHONY: test
 test: ## Test Python Package
-	python -m pytest --full-trace --pdb
+	python -m pytest --full-trace --pdb --cov=serfio
 
 .PHONY: build
 build: ## Build Python Package

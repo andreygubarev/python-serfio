@@ -88,8 +88,12 @@ class Protocol:
                 err = True
 
             if err:
-                self._buf += await self.transport.read()
-                continue
+                try:
+                    self._buf += await self.transport.read()
+                except asyncio.CancelledError:
+                    return
+                else:
+                    continue
 
             if "Seq" in resp:
                 self._seq_recv = resp["Seq"]

@@ -102,7 +102,7 @@ jobs:
     - name: Check if pre-release
       id: prerelease
       run: |
-        echo "prerelease=$(if [[ "${{ github.ref }}" == *"rc"* ]]; then echo "true"; else echo "false"; fi)" >> "$GITHUB_OUTPUT"
+        echo "prerelease=$(if [[ "${{ github.ref }}" == *"-rc"* ]]; then echo "true"; else echo "false"; fi)" >> "$GITHUB_OUTPUT"
 
     - uses: actions/download-artifact@v3
       with:

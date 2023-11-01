@@ -1,3 +1,7 @@
+# 0.2.5 (2023-11-01)
+
+-  Refactored task cancellation in protocol to handle asyncio errors.
+
 # 0.2.4 (2023-11-01)
 
 -  Added tests for `respond` and `query` methods

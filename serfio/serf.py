@@ -1,6 +1,10 @@
 import asyncio
+import logging
 
 from .protocol import Protocol
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class Serf:
@@ -40,7 +44,7 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                return (await anext(stream))[0]
 
     async def force_leave(self, node):
         req = await self.protocol.send({
@@ -83,12 +87,18 @@ class Serf:
         }
 
         if name:
+            if not isinstance(name, str):
+                raise TypeError("name must be a str")
             msg["body"]["Name"] = name
 
         if status:
+            if not isinstance(status, str):
+                raise TypeError("status must be a str")
             msg["body"]["Status"] = status
 
         if tags:
+            if not isinstance(tags, dict):
+                raise TypeError("tags must be a dict")
             msg["body"]["Tags"] = tags
 
         req = await self.protocol.send(msg)
@@ -122,10 +132,12 @@ class Serf:
         })
 
         async with self.protocol.recv(req) as stream:
+            await anext(stream)  # skip header
             async for event in stream:
+                logger.debug("serf.stream: %s", event)
                 yield event
 
-    async def monitor(self, log_level):
+    async def monitor(self, log_level="DEBUG"):
         req = await self.protocol.send({
             "command": "monitor",
             "body": {
@@ -134,7 +146,9 @@ class Serf:
         })
 
         async with self.protocol.recv(req) as stream:
+            await anext(stream)  # skip header
             async for event in stream:
+                logger.debug("serf.monitor: %s", event)
                 yield event
 
     async def stop(self, seq):

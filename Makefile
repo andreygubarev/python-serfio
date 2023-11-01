@@ -10,7 +10,7 @@ lint: ## Lint Python Package
 
 .PHONY: test
 test: ## Test Python Package
-	python -m pytest
+	python -m pytest --full-trace --pdb
 
 .PHONY: build
 build: ## Build Python Package
@@ -22,4 +22,4 @@ install: ## Install Python Package
 
 .PHONY: clean
 clean: ## Clean Python Package
-	rm -rf build dist *.egg-info
+	git clean -fdX

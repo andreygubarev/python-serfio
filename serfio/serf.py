@@ -40,7 +40,7 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                return (await anext(stream))[0]
 
     async def force_leave(self, node):
         req = await self.protocol.send({

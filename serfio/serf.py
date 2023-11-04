@@ -212,9 +212,13 @@ class Serf:
         }
 
         if filter_nodes:
+            if not isinstance(filter_nodes, list):
+                raise TypeError("filter_nodes must be a list")
             msg["body"]["FilterNodes"] = filter_nodes
 
         if filter_tags:
+            if not isinstance(filter_tags, dict):
+                raise TypeError("filter_tags must be a dict")
             msg["body"]["FilterTags"] = filter_tags
 
         req = await self.protocol.send(msg)

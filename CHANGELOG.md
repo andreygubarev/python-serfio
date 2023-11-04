@@ -1,3 +1,7 @@
+# 0.2.6 (2023-11-05)
+
+-  Added type checking for `filter_nodes` and `filter_tags`.
+
 # 0.2.5 (2023-11-01)
 
 -  Refactored task cancellation in protocol to handle asyncio errors.

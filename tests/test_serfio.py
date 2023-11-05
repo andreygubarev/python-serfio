@@ -5,16 +5,14 @@ import pytest
 
 async def test_stats(serf):
     async with serf:
-        header, body = await serf.stats()
-        assert not header["Error"]
-        assert "serf" in body
+        stats = await serf.stats()
+        assert "serf" in stats
 
 
 async def test_members(serf):
     async with serf:
-        header, body = await serf.members()
-        assert not header["Error"]
-        assert "Members" in body
+        members = await serf.members()
+        assert len(members) == 1
 
 
 async def test_members_filtered(serf):

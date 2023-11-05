@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from .errors import SerfError
 from .protocol import Protocol
 
 logger = logging.getLogger(__name__)
@@ -86,7 +87,10 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                header, body = await anext(stream)
+                if header["Error"]:
+                    raise SerfError(body["Error"])
+                return body["Members"]
 
     async def members_filtered(self, name=None, status=None, tags=None):
         msg = {
@@ -306,7 +310,10 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                header, body = await anext(stream)
+                if header["Error"]:
+                    raise SerfError(body["Error"])
+                return body
 
     async def get_coordinate(self, node):
         req = await self.protocol.send(

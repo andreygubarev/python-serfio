@@ -211,12 +211,13 @@ class Serf:
     async def query(
         self,
         name,
-        payload,
+        payload=None,
         filter_nodes=None,
         filter_tags=None,
         timeout=0,
         request_ack=True,
     ):
+        payload = payload or b""
         msg = {
             "command": "query",
             "body": {
@@ -258,7 +259,7 @@ class Serf:
     async def query_one(
         self,
         name,
-        payload,
+        payload=None,
         filter_nodes=None,
         filter_tags=None,
         timeout=0,

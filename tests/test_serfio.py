@@ -84,8 +84,11 @@ async def test_respond(serf):
             async for event in serf.stream("query"):
                 query_id = event["ID"]
                 query_name = event["Name"]
-                query_payload = event["Payload"].decode()
-                query_response = f"response:{query_name}:{query_payload}"
+                if event["Payload"]:
+                    payload = event["Payload"].decode()
+                else:
+                    payload = ""
+                query_response = f"response:{query_name}:{payload}"
                 await serf.respond(query_id, query_response)
                 break
 
@@ -99,16 +102,19 @@ async def test_respond_one(serf):
 
         async def query():
             await asyncio.sleep(0.1)
-            event = await serf.query_one("test", "test")
+            event = await serf.query_one("test")
             assert event["Type"] == "response"
-            assert event["Payload"] == b"response:test:test"
+            assert event["Payload"] == b"response:test:"
 
         async def respond():
             async for event in serf.stream("query"):
                 query_id = event["ID"]
                 query_name = event["Name"]
-                query_payload = event["Payload"].decode()
-                query_response = f"response:{query_name}:{query_payload}"
+                if event["Payload"]:
+                    payload = event["Payload"].decode()
+                else:
+                    payload = ""
+                query_response = f"response:{query_name}:{payload}"
                 await serf.respond(query_id, query_response)
                 break
 

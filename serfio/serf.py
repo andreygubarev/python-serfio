@@ -91,7 +91,7 @@ class Serf:
             async with asyncio.timeout(self.TIMEOUT):
                 header, body = await anext(stream)
                 if header["Error"]:
-                    raise SerfError(body["Error"])
+                    raise SerfError(header["Error"])
                 return body["Members"]
 
     async def members_filtered(self, name=None, status=None, tags=None):
@@ -120,7 +120,7 @@ class Serf:
             async with asyncio.timeout(self.TIMEOUT):
                 header, body = await anext(stream)
                 if header["Error"]:
-                    raise SerfError(body["Error"])
+                    raise SerfError(header["Error"])
                 return body["Members"]
 
     async def tags(self, tags=None, delete_tags=None):
@@ -156,9 +156,11 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             await anext(stream)  # skip header
-            async for event in stream:
-                logger.debug("serf.stream: %s", event)
-                yield event
+            async for header, body in stream:
+                logger.debug("serf.stream: %s %s", header, body)
+                if header["Error"]:
+                    raise SerfError(header["Error"])
+                yield body
 
     async def monitor(self, log_level="DEBUG"):
         req = await self.protocol.send(
@@ -234,10 +236,19 @@ class Serf:
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
                 await anext(stream)  # skip header
-                async for event in stream:
-                    yield event
-                    if event[1]["Type"] == "done":
+                acks = 0
+                async for header, body in stream:
+                    if header["Error"]:
+                        raise SerfError(header["Error"])
+
+                    if body["Type"] == "ack":
+                        acks += 1
+                        continue
+
+                    if body["Type"] == "done":
                         break
+
+                    yield body
 
     async def respond(self, id_, payload=None):
         msg = {

@@ -38,11 +38,9 @@ async def test_stream(serf):
         serf_event = asyncio.create_task(serf_event())
 
         async for event in serf.stream():
-            header, body = event
-            assert not header["Error"]
-            assert body["Event"] == "user"
-            assert body["Name"] == "test"
-            assert body["Payload"] == b"test"
+            assert event["Event"] == "user"
+            assert event["Name"] == "test"
+            assert event["Payload"] == b"test"
             break
 
         await asyncio.gather(serf_event)
@@ -78,10 +76,8 @@ async def test_tags(serf):
 async def test_query(serf):
     async with serf:
         async for event in serf.query("test", "test"):
-            header, body = event
-            assert not header["Error"]
-            assert "Type" in body
-            assert body["Type"] == "ack"
+            assert "Type" in event
+            assert event["Type"] == "ack"
             break
 
 
@@ -91,20 +87,14 @@ async def test_respond(serf):
         async def query():
             await asyncio.sleep(0.1)
             async for event in serf.query("test", "test"):
-                header, body = event
-                assert not header["Error"]
-                if body["Type"] == "ack":
-                    continue
-                if body["Type"] == "response":
-                    assert body["Payload"] == b"response:test:test"
+                if event["Type"] == "response":
+                    assert event["Payload"] == b"response:test:test"
 
         async def respond():
             async for event in serf.stream("query"):
-                header, body = event
-                assert not header["Error"]
-                query_id = body["ID"]
-                query_name = body["Name"]
-                query_payload = body["Payload"].decode()
+                query_id = event["ID"]
+                query_name = event["Name"]
+                query_payload = event["Payload"].decode()
                 query_response = f"response:{query_name}:{query_payload}"
                 await serf.respond(query_id, query_response)
                 break

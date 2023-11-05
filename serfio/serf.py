@@ -255,6 +255,25 @@ class Serf:
 
                     yield body
 
+    async def query_one(
+        self,
+        name,
+        payload,
+        filter_nodes=None,
+        filter_tags=None,
+        timeout=0,
+        request_ack=True,
+    ):
+        async for event in self.query(
+            name,
+            payload,
+            filter_nodes=filter_nodes,
+            filter_tags=filter_tags,
+            timeout=timeout,
+            request_ack=request_ack,
+        ):
+            return event
+
     async def respond(self, id_, payload=None):
         msg = {
             "command": "respond",

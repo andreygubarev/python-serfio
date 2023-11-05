@@ -92,3 +92,26 @@ async def test_respond(serf):
         query = asyncio.create_task(query())
         respond = asyncio.create_task(respond())
         await asyncio.gather(query, respond)
+
+
+async def test_respond_one(serf):
+    async with serf:
+
+        async def query():
+            await asyncio.sleep(0.1)
+            event = await serf.query_one("test", "test")
+            assert event["Type"] == "response"
+            assert event["Payload"] == b"response:test:test"
+
+        async def respond():
+            async for event in serf.stream("query"):
+                query_id = event["ID"]
+                query_name = event["Name"]
+                query_payload = event["Payload"].decode()
+                query_response = f"response:{query_name}:{query_payload}"
+                await serf.respond(query_id, query_response)
+                break
+
+        query = asyncio.create_task(query())
+        respond = asyncio.create_task(respond())
+        await asyncio.gather(query, respond)

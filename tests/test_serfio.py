@@ -17,10 +17,8 @@ async def test_members(serf):
 
 async def test_members_filtered(serf):
     async with serf:
-        header, body = await serf.members_filtered(tags={"test": "test"})
-        assert not header["Error"]
-        assert "Members" in body
-        assert len(body["Members"]) == 0
+        members = await serf.members_filtered(tags={"test": "test"})
+        assert len(members) == 0
 
 
 async def test_event(serf):
@@ -73,10 +71,8 @@ async def test_tags(serf):
         with pytest.raises(TypeError):
             await serf.tags(delete_tags={"test2": "test2"})
 
-        header, body = await serf.members_filtered(tags={"test": "test"})
-        assert not header["Error"]
-        assert "Members" in body
-        assert len(body["Members"]) == 1
+        members = await serf.members_filtered(tags={"test": "test"})
+        assert len(members) == 1
 
 
 async def test_query(serf):

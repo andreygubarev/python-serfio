@@ -116,7 +116,10 @@ class Serf:
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+                header, body = await anext(stream)
+                if header["Error"]:
+                    raise SerfError(body["Error"])
+                return body["Members"]
 
     async def tags(self, tags=None, delete_tags=None):
         msg = {

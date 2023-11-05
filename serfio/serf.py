@@ -142,7 +142,9 @@ class Serf:
         req = await self.protocol.send(msg)
         async with self.protocol.recv(req) as stream:
             async with asyncio.timeout(self.TIMEOUT):
-                return (await anext(stream))[0]
+                header = (await anext(stream))[0]
+                if header["Error"]:
+                    raise SerfError(header["Error"])
 
     async def stream(self, event_type="*"):
         req = await self.protocol.send(

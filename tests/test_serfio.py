@@ -55,14 +55,14 @@ async def test_monitor(serf):
 
 async def test_tags(serf):
     async with serf:
-        header = await serf.tags(tags={"test": "test", "test2": "test2"})
-        assert not header["Error"]
+        resp = await serf.tags(tags={"test": "test", "test2": "test2"})
+        assert resp is None
 
         with pytest.raises(TypeError):
             await serf.tags(tags=["test"])
 
-        header = await serf.tags(delete_tags=["test2"])
-        assert not header["Error"]
+        resp = await serf.tags(delete_tags=["test2"])
+        assert resp is None
 
         with pytest.raises(TypeError):
             await serf.tags(delete_tags={"test2": "test2"})
@@ -71,22 +71,14 @@ async def test_tags(serf):
         assert len(members) == 1
 
 
-async def test_query(serf):
-    async with serf:
-        async for event in serf.query("test", "test"):
-            assert "Type" in event
-            assert event["Type"] == "ack"
-            break
-
-
 async def test_respond(serf):
     async with serf:
 
         async def query():
             await asyncio.sleep(0.1)
             async for event in serf.query("test", "test"):
-                if event["Type"] == "response":
-                    assert event["Payload"] == b"response:test:test"
+                assert event["Type"] == "response"
+                assert event["Payload"] == b"response:test:test"
 
         async def respond():
             async for event in serf.stream("query"):

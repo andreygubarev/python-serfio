@@ -1,3 +1,7 @@
+# 0.3.3 (2023-11-05)
+
+-  Refactored `respond` method in `serf` class to enforce payload type as bytes.
+
 # 0.3.2 (2023-11-05)
 
 -  Payload in serf queries has been made optional and related tests have been updated.

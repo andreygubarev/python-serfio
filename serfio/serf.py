@@ -51,34 +51,34 @@ class Serf:
                 if header["Error"]:
                     raise SerfError(header["Error"])
 
-    async def force_leave(self, node):
-        req = await self.protocol.send(
-            {
-                "command": "force-leave",
-                "body": {
-                    "Node": node,
-                },
-            }
-        )
+    # async def force_leave(self, node):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "force-leave",
+    #             "body": {
+    #                 "Node": node,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
-    async def join(self, addresses, replay=False):
-        req = await self.protocol.send(
-            {
-                "command": "join",
-                "body": {
-                    "Existing": addresses,
-                    "Replay": replay,
-                },
-            }
-        )
+    # async def join(self, addresses, replay=False):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "join",
+    #             "body": {
+    #                 "Existing": addresses,
+    #                 "Replay": replay,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
     async def members(self):
         req = await self.protocol.send(
@@ -183,30 +183,30 @@ class Serf:
                 logger.debug("serf.monitor: %s", body)
                 yield body
 
-    async def stop(self, seq):
-        req = await self.protocol.send(
-            {
-                "command": "stop",
-                "body": {
-                    "Seq": seq,
-                },
-            }
-        )
+    # async def stop(self, seq):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "stop",
+    #             "body": {
+    #                 "Seq": seq,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
-    async def leave(self):
-        req = await self.protocol.send(
-            {
-                "command": "leave",
-            }
-        )
+    # async def leave(self):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "leave",
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
     async def query(
         self,
@@ -269,58 +269,58 @@ class Serf:
             async with asyncio.timeout(self.TIMEOUT):
                 return await anext(stream)
 
-    async def install_key(self, key):
-        req = await self.protocol.send(
-            {
-                "command": "install-key",
-                "body": {
-                    "Key": key,
-                },
-            }
-        )
+    # async def install_key(self, key):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "install-key",
+    #             "body": {
+    #                 "Key": key,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
-    async def use_key(self, key):
-        req = await self.protocol.send(
-            {
-                "command": "use-key",
-                "body": {
-                    "Key": key,
-                },
-            }
-        )
+    # async def use_key(self, key):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "use-key",
+    #             "body": {
+    #                 "Key": key,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
-    async def remove_key(self, key):
-        req = await self.protocol.send(
-            {
-                "command": "remove-key",
-                "body": {
-                    "Key": key,
-                },
-            }
-        )
+    # async def remove_key(self, key):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "remove-key",
+    #             "body": {
+    #                 "Key": key,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
-    async def list_keys(self):
-        req = await self.protocol.send(
-            {
-                "command": "list-keys",
-            }
-        )
+    # async def list_keys(self):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "list-keys",
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)
 
     async def stats(self):
         req = await self.protocol.send(
@@ -336,16 +336,16 @@ class Serf:
                     raise SerfError(body["Error"])
                 return body
 
-    async def get_coordinate(self, node):
-        req = await self.protocol.send(
-            {
-                "command": "get-coordinate",
-                "body": {
-                    "Node": node,
-                },
-            }
-        )
+    # async def get_coordinate(self, node):
+    #     req = await self.protocol.send(
+    #         {
+    #             "command": "get-coordinate",
+    #             "body": {
+    #                 "Node": node,
+    #             },
+    #         }
+    #     )
 
-        async with self.protocol.recv(req) as stream:
-            async with asyncio.timeout(self.TIMEOUT):
-                return await anext(stream)
+    #     async with self.protocol.recv(req) as stream:
+    #         async with asyncio.timeout(self.TIMEOUT):
+    #             return await anext(stream)

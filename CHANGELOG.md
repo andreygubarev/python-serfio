@@ -7,7 +7,7 @@
 -  Simplified the `Serf` class methods.
 -  Enhanced error handling.
 -  Updated tests to reflect changes in error handling.
--  Commented out several methods in the `Serf`` class.
+-  Commented out several methods in the `Serf` class.
 
 # 0.2.6 (2023-11-05)
 

@@ -5,30 +5,26 @@ import pytest
 
 async def test_stats(serf):
     async with serf:
-        header, body = await serf.stats()
-        assert not header["Error"]
-        assert "serf" in body
+        stats = await serf.stats()
+        assert "serf" in stats
 
 
 async def test_members(serf):
     async with serf:
-        header, body = await serf.members()
-        assert not header["Error"]
-        assert "Members" in body
+        members = await serf.members()
+        assert len(members) == 1
 
 
 async def test_members_filtered(serf):
     async with serf:
-        header, body = await serf.members_filtered(tags={"test": "test"})
-        assert not header["Error"]
-        assert "Members" in body
-        assert len(body["Members"]) == 0
+        members = await serf.members_filtered(tags={"test": "test"})
+        assert len(members) == 0
 
 
 async def test_event(serf):
     async with serf:
-        header = await serf.event("test", "test")
-        assert not header["Error"]
+        resp = await serf.event("test", "test")
+        assert resp is None
 
 
 async def test_stream(serf):
@@ -36,17 +32,15 @@ async def test_stream(serf):
 
         async def serf_event():
             await asyncio.sleep(0.1)
-            header = await serf.event("test", "test")
-            assert not header["Error"]
+            resp = await serf.event("test", "test")
+            assert resp is None
 
         serf_event = asyncio.create_task(serf_event())
 
         async for event in serf.stream():
-            header, body = event
-            assert not header["Error"]
-            assert body["Event"] == "user"
-            assert body["Name"] == "test"
-            assert body["Payload"] == b"test"
+            assert event["Event"] == "user"
+            assert event["Name"] == "test"
+            assert event["Payload"] == b"test"
             break
 
         await asyncio.gather(serf_event)
@@ -55,40 +49,26 @@ async def test_stream(serf):
 async def test_monitor(serf):
     async with serf:
         async for event in serf.monitor():
-            header, body = event
-            assert not header["Error"]
-            assert "Serf agent starting" in body["Log"]
+            assert "Serf agent starting" in event["Log"]
             break
 
 
 async def test_tags(serf):
     async with serf:
-        header = await serf.tags(tags={"test": "test", "test2": "test2"})
-        assert not header["Error"]
+        resp = await serf.tags(tags={"test": "test", "test2": "test2"})
+        assert resp is None
 
         with pytest.raises(TypeError):
             await serf.tags(tags=["test"])
 
-        header = await serf.tags(delete_tags=["test2"])
-        assert not header["Error"]
+        resp = await serf.tags(delete_tags=["test2"])
+        assert resp is None
 
         with pytest.raises(TypeError):
             await serf.tags(delete_tags={"test2": "test2"})
 
-        header, body = await serf.members_filtered(tags={"test": "test"})
-        assert not header["Error"]
-        assert "Members" in body
-        assert len(body["Members"]) == 1
-
-
-async def test_query(serf):
-    async with serf:
-        async for event in serf.query("test", "test"):
-            header, body = event
-            assert not header["Error"]
-            assert "Type" in body
-            assert body["Type"] == "ack"
-            break
+        members = await serf.members_filtered(tags={"test": "test"})
+        assert len(members) == 1
 
 
 async def test_respond(serf):
@@ -97,20 +77,14 @@ async def test_respond(serf):
         async def query():
             await asyncio.sleep(0.1)
             async for event in serf.query("test", "test"):
-                header, body = event
-                assert not header["Error"]
-                if body["Type"] == "ack":
-                    continue
-                if body["Type"] == "response":
-                    assert body["Payload"] == b"response:test:test"
+                assert event["Type"] == "response"
+                assert event["Payload"] == b"response:test:test"
 
         async def respond():
             async for event in serf.stream("query"):
-                header, body = event
-                assert not header["Error"]
-                query_id = body["ID"]
-                query_name = body["Name"]
-                query_payload = body["Payload"].decode()
+                query_id = event["ID"]
+                query_name = event["Name"]
+                query_payload = event["Payload"].decode()
                 query_response = f"response:{query_name}:{query_payload}"
                 await serf.respond(query_id, query_response)
                 break

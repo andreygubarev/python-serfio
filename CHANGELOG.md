@@ -1,3 +1,7 @@
+# 0.3.2 (2023-11-05)
+
+-  Payload in serf queries has been made optional and related tests have been updated.
+
 # 0.3.1 (2023-11-05)
 
 -  Added `query_one` method in `serf` module and its corresponding test in `test_serfio`.

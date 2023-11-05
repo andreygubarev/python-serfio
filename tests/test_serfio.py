@@ -23,8 +23,8 @@ async def test_members_filtered(serf):
 
 async def test_event(serf):
     async with serf:
-        header = await serf.event("test", "test")
-        assert not header["Error"]
+        resp = await serf.event("test", "test")
+        assert resp is None
 
 
 async def test_stream(serf):
@@ -32,8 +32,8 @@ async def test_stream(serf):
 
         async def serf_event():
             await asyncio.sleep(0.1)
-            header = await serf.event("test", "test")
-            assert not header["Error"]
+            resp = await serf.event("test", "test")
+            assert resp is None
 
         serf_event = asyncio.create_task(serf_event())
 

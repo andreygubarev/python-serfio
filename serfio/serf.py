@@ -174,9 +174,12 @@ class Serf:
 
         async with self.protocol.recv(req) as stream:
             await anext(stream)  # skip header
-            async for event in stream:
-                logger.debug("serf.monitor: %s", event)
-                yield event
+            async for header, body in stream:
+                if header["Error"]:
+                    raise SerfError(header["Error"])
+
+                logger.debug("serf.monitor: %s", body)
+                yield body
 
     async def stop(self, seq):
         req = await self.protocol.send(

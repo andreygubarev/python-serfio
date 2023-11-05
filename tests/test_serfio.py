@@ -49,9 +49,7 @@ async def test_stream(serf):
 async def test_monitor(serf):
     async with serf:
         async for event in serf.monitor():
-            header, body = event
-            assert not header["Error"]
-            assert "Serf agent starting" in body["Log"]
+            assert "Serf agent starting" in event["Log"]
             break
 
 

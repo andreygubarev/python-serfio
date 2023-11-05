@@ -1,3 +1,7 @@
+# 0.3.1 (2023-11-05)
+
+-  Added `query_one` method in `serf` module and its corresponding test in `test_serfio`.
+
 # 0.3.0 (2023-11-05)
 
 -  Simplified the `Serf` class methods.

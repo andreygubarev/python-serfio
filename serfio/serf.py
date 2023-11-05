@@ -275,11 +275,17 @@ class Serf:
         ):
             return event
 
-    async def respond(self, id_, payload=None):
+    async def respond(self, event_id, payload):
+        if isinstance(payload, str):
+            payload = payload.encode()
+
+        if not isinstance(payload, bytes):
+            raise TypeError("payload must be bytes")
+
         msg = {
             "command": "respond",
             "body": {
-                "ID": id_,
+                "ID": event_id,
                 "Payload": payload,
             },
         }
